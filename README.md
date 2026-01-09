@@ -1,4 +1,4 @@
-# Ketris
+# PyTetris
 
 A knock-off version of, the famous classic game, Tetris using **python** and **curses** module.
 
