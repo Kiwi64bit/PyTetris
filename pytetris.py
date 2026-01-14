@@ -150,11 +150,11 @@ class PyTetris:
         if key == -1:
             return
 
-        if key in (ord('q'), ord('Q')):
+        if key in (ord('p'), ord('P')):
             self.paused = not self.paused
             return
 
-        if key == 27:  # user pressed ESC
+        if key in (ord('q'), ord('Q')):
             self.game_over = True
             return
 
@@ -189,12 +189,12 @@ class PyTetris:
 
         stdscr.addstr(buffer.height + 2, 1, f'Score: {self.score}\n')
 
-        if self.paused:
-            stdscr.addstr(buffer.height + 4, 1, 'Press ESC to exit, or q to unpause.')
-        elif not self.game_over:
-            stdscr.addstr(buffer.height + 4, 1, 'Press ESC to exit, or q to pause.')
-        else:
+        if self.game_over:
             stdscr.addstr(buffer.height + 4, 1, 'GAME OVER! Press Space to exit.')
+        elif self.paused:
+            stdscr.addstr(buffer.height + 4, 1, 'Press Q to exit, or P to unpause.')
+        else:
+            stdscr.addstr(buffer.height + 4, 1, 'Press Q to exit, or P to pause.')
 
         stdscr.refresh()
 
