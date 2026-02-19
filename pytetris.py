@@ -15,7 +15,7 @@ class PyTetris:
         self.board: Grid = Grid(grid_size[0], grid_size[1], default=0)
         self.shapes: list[Tetromino] = self._create_tetrominos()
         self.bag: RandomBag = RandomBag(self.shapes)
-        self.active: Tetromino = self.spawn_piece()  # self.spawn_tetromino()
+        self.active: Tetromino = self.spawn_piece()
         self.key_bindings: dict = key_bindings
         self.actions: dict = {
                 'left'     : self.move_left,
@@ -23,7 +23,8 @@ class PyTetris:
                 'rotate'   : self.rotate,
                 'soft_drop': self.soft_drop,
         }
-        self.fall_speed: float = 0.5
+
+        self.fall_time: float = 0.5
         self.last_fall: float = time.monotonic()
         self.score: int = 0
         self.game_over: bool = False
@@ -37,7 +38,7 @@ class PyTetris:
                         [(0, -1), (0, 0), (0, 1), (0, 2)],  # vertical
                 ]),
                 Tetromino('O', [
-                        [(0, 0), (1, 0), (0, 1), (1, 1)],  # square (centered already)
+                        [(0, 0), (1, 0), (0, 1), (1, 1)],  # square
                 ]),
                 Tetromino('T', [
                         [(-1, 0), (0, 0), (1, 0), (0, -1)],  # up
@@ -69,22 +70,27 @@ class PyTetris:
 
     def tick(self) -> None:
         now: float = time.monotonic()
-        if not (now - self.last_fall >= self.fall_speed):
+        if now - self.last_fall < self.fall_time:
             return
         self.last_fall = now
         if not self.move_down():
-            self.lock()
-            cleared_lines: int = self.clear_lines()
-            self.score += self.lines_to_score(cleared_lines)
-            self.active = self.spawn_piece()
-            if not self.is_valid_state(self.active):
-                self.game_over = True
+            self.handle_lock()
+
+    def handle_lock(self) -> None:
+        self.lock()
+        cleared_lines: int = self.clear_lines()
+        self.score += self.calculate_score(cleared_lines)
+        self.active = self.spawn_piece()
+        if not self.is_valid_state(self.active):
+            self.handle_game_over()
+
+    def handle_game_over(self) -> None:
+        self.game_over = True
 
     def _move(self, dx: int, dy: int) -> bool:
-        clone: Tetromino = self.active.clone()
-        if self.is_valid_state(clone.move(dx, dy)):
-            self.active.move(dx, dy)
+        if self.is_valid_state(self.active.move(dx, dy)):
             return True
+        self.active.move(-dx, -dy)
         return False
 
     def move_down(self) -> bool:
@@ -100,10 +106,9 @@ class PyTetris:
         return self._move(1, 0)
 
     def rotate(self) -> bool:
-        clone: Tetromino = self.active.clone()
-        if self.is_valid_state(clone.rotate()):
-            self.active.rotate()
+        if self.is_valid_state(self.active.rotate()):
             return True
+        self.active.rotate(-1)
         return False
 
     def soft_drop(self) -> bool:
@@ -136,7 +141,7 @@ class PyTetris:
         return cleared_lines
 
     @staticmethod
-    def lines_to_score(cleared_lines: int) -> int:
+    def calculate_score(cleared_lines: int) -> int:
         return {1: 40, 2: 100, 3: 300, 4: 1200}.get(cleared_lines, 0)
 
     def is_valid_state(self, active: Tetromino) -> bool:

@@ -1,6 +1,4 @@
-from copy import deepcopy
 from typing import Sequence, TypeAlias
-
 from vector2 import Vector2
 
 Vector2Like: TypeAlias = Vector2 | Sequence[int | float]
@@ -24,16 +22,13 @@ class Tetromino:
         self._rotation_index = value % len(self.rotations)
         self.rotation = self.rotations[self._rotation_index]
 
-    def rotate(self) -> 'Tetromino':
-        self.rotation_index += 1
+    def rotate(self, step: int = 1) -> 'Tetromino':
+        self.rotation_index += step
         return self
 
     def move(self, dx: int, dy: int) -> 'Tetromino':
         self.pos += Vector2(dx, dy)
         return self
-
-    def clone(self) -> 'Tetromino':
-        return deepcopy(self)
 
     def get_margins(self) -> dict[str, int]:
         xs = [b.x for b in self.rotation]
