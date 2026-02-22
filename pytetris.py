@@ -185,7 +185,7 @@ class PyTetris:
             if self.board.is_inside(x, y):
                 buffer.set(x, y, '[]')
 
-        stdscr.clear()
+        stdscr.erase()
 
         stdscr.addstr(0, 0, '┌' + '──' * buffer.width + '┐')
         for i, row in enumerate(buffer.data):
