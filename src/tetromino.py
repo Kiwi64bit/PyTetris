@@ -1,5 +1,5 @@
 from typing import Sequence, TypeAlias
-from vector2 import Vector2
+from src.vector2 import Vector2
 
 Vector2Like: TypeAlias = Vector2 | Sequence[int | float]
 Rotations: TypeAlias = list[list[Vector2Like]]

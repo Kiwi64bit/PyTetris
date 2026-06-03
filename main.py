@@ -1,5 +1,5 @@
 import curses
-from pytetris import PyTetris
+from src.pytetris import PyTetris
 
 
 def main(stdscr: curses.window) -> None:

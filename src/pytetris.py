@@ -1,10 +1,10 @@
 import curses
 import time
 from typing import Sequence, TypeAlias
-from vector2 import Vector2
-from grid import Grid
-from random_generator import RandomBag
-from tetromino import Tetromino
+from src.vector2 import Vector2
+from src.grid import Grid
+from src.random_generator import RandomBag
+from src.tetromino import Tetromino
 
 Vector2Like: TypeAlias = Vector2 | Sequence[int | float]
 Rotations: TypeAlias = list[list[Vector2Like]]
